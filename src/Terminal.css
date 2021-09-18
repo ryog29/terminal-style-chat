@@ -1,0 +1,32 @@
+.terminal {
+  width: 100vw;
+  height: 100vh;
+  font-weight: normal;
+  font-size: 20px;
+  color: limegreen;
+}
+
+.displayLine {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+}
+
+.rightAngleBracket {
+  padding: 0 5px;
+  color: lightpink;
+}
+
+input {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  color: limegreen;
+  caret-color: limegreen;
+  background-color: black;
+  font-size: 100%;
+  font-family: inherit;
+  border: 0;
+  outline: none;
+}
