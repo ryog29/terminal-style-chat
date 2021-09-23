@@ -1,4 +1,4 @@
-import { TerminalState } from './index.d';
+import { Directory, TerminalState } from './index.d';
 import { getChildDirs } from './selector';
 import {
   CD,
@@ -10,6 +10,35 @@ import {
   TerminalActionTypes,
   TOUCH,
 } from './terminalAction';
+
+export const createDirs = (
+  terminalState: TerminalState,
+  dirNames: string[],
+): [{ [key: string]: Directory }, string[]] => {
+  const filteredDirNames: string[] = [];
+  const errMsges: string[] = [];
+  dirNames.forEach((dirName) => {
+    const dirExists = Object.keys(terminalState.directories).includes(
+      `${terminalState.curDirPath}/${dirName}`,
+    );
+    if (dirExists) {
+      errMsges.push(`mkdir: ${dirName}: File exists`);
+    } else {
+      filteredDirNames.push(dirName);
+    }
+  });
+  const dirs = filteredDirNames.reduce(
+    (dirs: { [key: string]: Directory }, dirName: string) => {
+      dirs[`${terminalState.curDirPath}/${dirName}`] = {
+        name: dirName,
+        files: {},
+      };
+      return dirs;
+    },
+    {},
+  );
+  return [dirs, errMsges];
+};
 
 export const appReducer = (
   terminalState: TerminalState,
@@ -23,25 +52,25 @@ export const appReducer = (
       };
     }
     case MKDIR: {
-      if (
-        Object.keys(terminalState.directories).includes(
-          `${terminalState.curDirPath}/${action.payload.dirName}`,
-        )
-      ) {
-        const errMsg = `mkdir: ${action.payload.dirName}: File exists`;
+      const [dirs, errMsges] = createDirs(
+        terminalState,
+        action.payload.dirNames,
+      );
+      if (errMsges.length !== 0) {
         return {
           ...terminalState,
-          lineText: [...terminalState.lineText, errMsg],
+          lineText: [...terminalState.lineText, ...errMsges],
+          directories: {
+            ...terminalState.directories,
+            ...dirs,
+          },
         };
       } else {
         return {
           ...terminalState,
           directories: {
             ...terminalState.directories,
-            [`${terminalState.curDirPath}/${action.payload.dirName}`]: {
-              name: action.payload.dirName,
-              files: {},
-            },
+            ...dirs,
           },
         };
       }

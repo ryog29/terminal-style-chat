@@ -11,9 +11,9 @@ export const setText = (text: string) => ({
   payload: { text },
 });
 
-export const mkdir = (dirName: string) => ({
+export const mkdir = (dirNames: string[]) => ({
   type: MKDIR,
-  payload: { dirName },
+  payload: { dirNames },
 });
 
 export const pwd = () => ({

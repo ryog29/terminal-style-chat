@@ -43,6 +43,7 @@ import './Terminal.css';
 // テスト
 // 日本語入力回避
 // 画面の一番下まで行ったら自動スクロール
+// 連続するパスに対応 (ex: cd hoge/foo/bar)
 
 const initialState: TerminalState = {
   lineText: [],
@@ -84,7 +85,9 @@ const dispatchCommand = (
 ) => {
   switch (command.name) {
     case MKDIR:
-      dispatch(mkdir(command.args[0]));
+      // TODO: -p オプションで親ディレクトリもまとめて作成する
+      // TODO: 同じ名前の引数を複数与えた時にエラーメッセージを表示する
+      dispatch(mkdir(command.args));
       break;
     case TOUCH: //TODO: 空文字対策
       dispatch(touch(command.args[0]));
