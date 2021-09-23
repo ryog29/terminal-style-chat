@@ -1,16 +1,14 @@
-export const SET_TEXT = 'SET_TEXT' as const;
-export const MKDIR = 'MKDIR' as const;
-export const PWD = 'PWD' as const;
-export const LS = 'LS' as const;
-export const TOUCH = 'TOUCH' as const;
-export const CD = 'CD' as const;
-export const RM = 'RM' as const;
+export const SET_TEXT = 'set_text' as const;
+export const MKDIR = 'mkdir' as const;
+export const PWD = 'pwd' as const;
+export const LS = 'ls' as const;
+export const TOUCH = 'touch' as const;
+export const CD = 'cd' as const;
+export const RM = 'rm' as const;
 
 export const setText = (text: string) => ({
   type: SET_TEXT,
-  payload: {
-    text,
-  },
+  payload: { text },
 });
 
 export const mkdir = (dirName: string) => ({

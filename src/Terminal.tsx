@@ -1,14 +1,20 @@
 import React, { useEffect, useReducer } from 'react';
-import { TerminalState } from './index.d';
+import { Command, TerminalState } from './index.d';
 import {
   cd,
+  CD,
   ls,
+  LS,
   mkdir,
+  MKDIR,
   pwd,
+  PWD,
   rm,
+  RM,
   setText,
   TerminalActionTypes,
   touch,
+  TOUCH,
 } from './terminalAction';
 import { appReducer } from './terminalReducer';
 import './Terminal.css';
@@ -27,6 +33,8 @@ import './Terminal.css';
 // cat
 // tree
 // echo
+// mv
+// cp
 // オプション引数
 // パイプ機能
 // 入力補完機能
@@ -47,36 +55,54 @@ const initialState: TerminalState = {
   },
 };
 
-// TODO: オプション引数のパース
-const parseCommand = (inputText: String): string[] => {
-  return inputText.trim().split(' ');
+const parseCommand = (inputText: String): Command => {
+  const splittedText = inputText.trim().split(' ');
+  const command = splittedText.reduce(
+    (com: Command, text, index) => {
+      if (index === 0) {
+        return {
+          ...com,
+          name: text,
+        };
+      }
+      if (text[0] === '-') {
+        return {
+          ...com,
+          options: [...com.options, ...text.slice(1).split('')],
+        };
+      }
+      return { ...com, args: [...com.args, text] };
+    },
+    { name: '', args: [], options: [] },
+  );
+  return command;
 };
 
 const dispatchCommand = (
   dispatch: React.Dispatch<TerminalActionTypes>,
-  parsedCommand: string[],
+  command: Command,
 ) => {
-  switch (parsedCommand[0]) {
-    case 'mkdir':
-      dispatch(mkdir(parsedCommand[1]));
+  switch (command.name) {
+    case MKDIR:
+      dispatch(mkdir(command.args[0]));
       break;
-    case 'touch': //TODO: 空文字対策
-      dispatch(touch(parsedCommand[1]));
+    case TOUCH: //TODO: 空文字対策
+      dispatch(touch(command.args[0]));
       break;
-    case 'pwd':
+    case PWD:
       dispatch(pwd());
       break;
-    case 'ls':
+    case LS:
       dispatch(ls());
       break;
-    case 'cd':
-      dispatch(cd(parsedCommand[1]));
+    case CD:
+      dispatch(cd(command.args[0]));
       break;
-    case 'rm':
-      dispatch(rm(parsedCommand[1]));
+    case RM:
+      dispatch(rm(command.args[0]));
       break;
     default:
-      dispatch(setText(`command not found: ${parsedCommand[0]}`));
+      dispatch(setText(`command not found: ${command.name}`));
       break;
   }
 };

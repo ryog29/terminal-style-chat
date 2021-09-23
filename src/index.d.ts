@@ -13,3 +13,9 @@ export type File = {
   name: string;
   contents: string;
 };
+
+export type Command = {
+  name: string;
+  args: string[];
+  options: string[];
+};
